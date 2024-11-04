@@ -1,18 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SearchBar from './components/SearchBar';
+import CountryList from './components/CountryList.tsx';
+import { Country } from './types';
+import { fetchCountriesByCode } from './services/countryService';
 
 const App: React.FC = () => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [countries, setCountries] = useState<Country[]>([]);
 
-  const handleSearchChange = (city: string) => {
-    setSearchTerm(city);
+  const handleSearchChange = async (value: string) => {
+    if (value.trim()) {
+      try {
+        const fetchedCountries = await fetchCountriesByCode(
+          value.toUpperCase()
+        );
+        setCountries(fetchedCountries || []);
+      } catch (error) {
+        console.error('Ошибка при загрузке стран:', error);
+        setCountries([]);
+      }
+    } else {
+      setCountries([]);
+    }
   };
 
   return (
-    <div className="App">
-      <h1>Country</h1>
-      <SearchBar onSearch={handleSearchChange} />
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <h1>Countries</h1>
+              <SearchBar onSearch={handleSearchChange} />
+              <CountryList countries={countries} />
+            </>
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 

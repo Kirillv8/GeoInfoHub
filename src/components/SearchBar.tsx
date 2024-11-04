@@ -1,24 +1,25 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { TextField } from '@mui/material';
 
 interface SearchBarProps {
-  onSearch: (city: string) => void;
+  onSearch: (value: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [city, setCity] = useState('');
+  const [searchValue, setSearchValue] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCity(event.target.value);
+    setSearchValue(event.target.value);
     onSearch(event.target.value);
   };
 
   return (
-    <>
-      <h1>Countries</h1>
-      <input type="text" value={city} onChange={handleChange} />
-      <div>{city}</div>
-    </>
+    <TextField
+      label="Search by country code"
+      variant="outlined"
+      value={searchValue}
+      onChange={handleChange}
+    />
   );
 };
 
